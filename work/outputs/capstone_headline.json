@@ -1,0 +1,34 @@
+{
+  "lane": "Lane 2 -- Refresh / Content Opportunity Scoring",
+  "question": "Given a client's content inventory, which pages should a reviewer look at first this week?",
+  "data": "content_refresh_anonymized.csv, 30,000 rows, 32 pseudonymized clients (starter sample)",
+  "label": "is_declining_label = (trend_direction == 'down') -- explicit proxy, not a future outcome",
+  "validation_design": "client-grouped holdout (~20% of clients held out entirely, never seen in training)",
+  "split_design_finding": {
+    "random_split_P50": 0.92,
+    "client_grouped_P50": 0.56,
+    "gap": 0.36,
+    "interpretation": "the gap is the amount of the random-split score reflecting client recognition, not a page-level pattern"
+  },
+  "final_model": {
+    "type": "RandomForestClassifier(n_estimators=300, max_depth=10, class_weight='balanced')",
+    "P50": 0.56,
+    "P20": 0.5,
+    "ROC_AUC": 0.661,
+    "base_rate": 0.484
+  },
+  "baseline_rule": "stale_ctr_underperformer -- visible AND stale 90+ days AND CTR below its own position-tier weighted baseline",
+  "reason_codes": [
+    "stale_ctr_underperformer",
+    "high_decline_risk",
+    "deep_thin_content",
+    "mature_never_refreshed",
+    "stable_top_performer"
+  ],
+  "actions": [
+    "protect",
+    "refresh_priority",
+    "refresh_review",
+    "monitor"
+  ]
+}
